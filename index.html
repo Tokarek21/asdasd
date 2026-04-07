@@ -2,163 +2,162 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>AI Five Nights at Freddy's Clone</title>
+    <title>AI FNAF - Remastered</title>
     <style>
-        body { margin: 0; background: #000; color: white; font-family: 'Courier New', monospace; overflow: hidden; user-select: none; }
-        
-        /* BIURO */
-        #office {
-            width: 100vw; height: 100vh;
-            background: #111 url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-            display: flex; justify-content: center; align-items: center;
-            position: relative; transition: transform 0.1s;
-        }
+        :root { --pwr: #0f0; }
+        body { margin: 0; background: #000; color: white; font-family: 'Courier New', monospace; overflow: hidden; }
 
-        #desk {
-            width: 600px; height: 300px; background: #222;
-            position: absolute; bottom: 0; border-top: 5px solid #333;
-        }
-
-        /* KAMERY */
-        #monitor-btn {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 400px; height: 40px; background: rgba(255,255,255,0.2);
-            border: 2px solid white; cursor: pointer; z-index: 100; text-align: center; line-height: 40px;
-        }
-
-        #camera-system {
-            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 50;
-        }
-
-        #cam-view {
-            width: 100%; height: 100%; object-fit: cover; opacity: 0.6;
-        }
-
-        .cam-map {
-            position: absolute; bottom: 50px; right: 50px; width: 200px; height: 150px;
-            background: rgba(0,0,0,0.8); border: 2px solid white; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 10px;
-        }
-
-        .cam-btn { background: #444; color: white; border: 1px solid white; cursor: pointer; padding: 5px; font-size: 10px; }
-        .cam-btn:hover { background: #888; }
-
-        /* UI STATYSTYKI */
-        #ui { position: absolute; top: 20px; left: 20px; z-index: 10; font-size: 24px; }
-        #static {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        /* Nakładka szumu na cały ekran */
+        .noise {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('https://media.giphy.com/media/oEI9uWUqWMrBK/giphy.gif');
-            opacity: 0.1; pointer-events: none; z-index: 60; display: none;
+            opacity: 0.05; pointer-events: none; z-index: 100;
         }
 
-        /* JUMPSCARE */
-        #jumpscare {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: red; z-index: 1000; justify-content: center; align-items: center;
+        /* Biuro */
+        #game-container {
+            width: 100vw; height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            perspective: 1000px;
         }
+
+        #office {
+            width: 120%; height: 100%;
+            background: linear-gradient(to bottom, #1a1a1a, #0a0a0a);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 10%; transition: transform 0.1s ease-out;
+        }
+
+        /* Drzwi i Przyciski */
+        .door-controls { display: flex; flex-direction: column; gap: 10px; z-index: 10; }
+        .btn {
+            width: 50px; height: 70px; border: 3px solid #444;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 12px; text-align: center;
+        }
+        .btn-light { background: #fff; color: #000; }
+        .btn-door { background: #a00; color: #fff; }
+        .btn-active { background: #0f0 !important; box-shadow: 0 0 15px #0f0; }
+
+        .door-visual {
+            position: absolute; top: 0; width: 15%; height: 80%; background: #222;
+            transition: transform 0.5s; border: 4px solid #111;
+        }
+        #door-left { left: 5%; transform: translateY(-100%); }
+        #door-right { right: 5%; transform: translateY(-100%); }
+        .door-closed { transform: translateY(0%) !important; }
+
+        /* Monitor */
+        #monitor-toggle {
+            position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 40%; height: 50px; background: rgba(255,255,255,0.1);
+            border: 2px solid #555; border-bottom: none; cursor: pointer;
+            text-align: center; line-height: 50px; z-index: 200;
+        }
+
+        #camera-screen {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 150;
+        }
+
+        #ui { position: absolute; bottom: 20px; left: 20px; z-index: 300; line-height: 1.5; }
+        #power-bar { color: var(--pwr); font-size: 24px; }
     </style>
 </head>
 <body>
 
+    <div class="noise"></div>
+
     <div id="ui">
-        <div>Power: <span id="power">100</span>%</div>
         <div id="time">12 AM</div>
+        <div>Power: <span id="power-val">100</span>%</div>
+        <div id="usage">Usage: ></div>
     </div>
 
-    <div id="office">
-        <div style="font-size: 100px;">🌑</div> <div id="desk"></div>
-    </div>
+    <div id="game-container">
+        <div id="office">
+            <div class="door-controls">
+                <div class="btn btn-door" onclick="toggleElement('door-left', this)">DOOR</div>
+                <div class="btn btn-light" onmousedown="setLight(true)" onmouseup="setLight(false)">LIGHT</div>
+            </div>
+            
+            <div id="door-left" class="door-visual"></div>
 
-    <div id="monitor-btn" onclick="toggleCams()">MONITOR</div>
+            <div style="text-align:center;">
+                <h2 style="color: #333;">POSTER</h2>
+                <div style="width:200px; hieght:100px; background:#111; margin:auto;"></div>
+            </div>
 
-    <div id="camera-system">
-        <div id="static"></div>
-        <div id="cam-info" style="position:absolute; top:20px; right:20px; font-size:30px;">CAM 1</div>
-        <div class="cam-map">
-            <button class="cam-btn" onclick="switchCam(1, 'https://images.unsplash.com/photo-1510070112810-d4e9a46d9e91?auto=format&fit=crop&w=800&q=80')">CAM 1</button>
-            <button class="cam-btn" onclick="switchCam(2, 'https://images.unsplash.com/photo-1519074063912-92f5727b24bb?auto=format&fit=crop&w=800&q=80')">CAM 2</button>
-            <button class="cam-btn" onclick="switchCam(3, 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80')">CAM 3</button>
-            <button class="cam-btn" onclick="switchCam(4, 'https://images.unsplash.com/photo-1505798577917-a65157d3320a?auto=format&fit=crop&w=800&q=80')">CAM 4</button>
+            <div id="door-right" class="door-visual"></div>
+            
+            <div class="door-controls">
+                <div class="btn btn-door" onclick="toggleElement('door-right', this)">DOOR</div>
+                <div class="btn btn-light" onmousedown="setLight(true)" onmouseup="setLight(false)">LIGHT</div>
+            </div>
         </div>
-        <img id="cam-view" src="" alt="View">
     </div>
 
-    <div id="jumpscare">
-        <h1 style="font-size: 100px;">😱 KONIEC GRY</h1>
+    <div id="monitor-toggle" onmouseover="toggleCams()">^ MONITOR ^</div>
+
+    <div id="camera-screen">
+        <div style="padding: 20px; font-size: 20px;">CAM 01 - SHOW STAGE</div>
+        <img id="cam-img" src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=800" style="width:100%; height:80%; object-fit:cover; filter: grayscale(1) contrast(1.5);">
+        <div style="position:absolute; bottom:50px; right:50px; border:2px solid white; padding:10px; background: rgba(0,0,0,0.5);">
+            MAPA (WIP)
+        </div>
     </div>
 
     <script>
-        let power = 100;
+        let power = 100.0;
+        let powerUsage = 1;
+        let hour = 12;
         let camsOpen = false;
-        let hour = 0;
-        let robotPos = 1; // Robot zaczyna w CAM 1
+        let leftDoor = false;
+        let rightDoor = false;
 
-        // Mechanika prądu
-        setInterval(() => {
-            if (power > 0) {
-                let usage = camsOpen ? 2 : 1;
-                power -= usage;
-                document.getElementById('power').innerText = power;
-            } else {
-                gameOver("Brak prądu...");
+        function updatePower() {
+            powerUsage = 1 + (leftDoor ? 1 : 0) + (rightDoor ? 1 : 0) + (camsOpen ? 1 : 0);
+            power -= (powerUsage * 0.05); // Wolniejsze zużycie
+            
+            document.getElementById('power-val').innerText = Math.floor(power);
+            document.getElementById('usage').innerText = "Usage: " + ">".repeat(powerUsage);
+
+            if (power <= 0) {
+                document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20%;'>BLACKOUT... GAME OVER</h1>";
             }
-        }, 3000);
+        }
 
-        // Zegar
-        setInterval(() => {
-            hour++;
-            if (hour > 6) alert("Przetrwałeś!");
-            document.getElementById('time').innerText = hour + " AM";
-        }, 45000);
+        function toggleElement(id, btn) {
+            const door = document.getElementById(id);
+            door.classList.toggle('door-closed');
+            btn.classList.toggle('btn-active');
+            if(id === 'door-left') leftDoor = !leftDoor;
+            if(id === 'door-right') rightDoor = !rightDoor;
+        }
+
+        function setLight(state) {
+            const office = document.getElementById('office');
+            office.style.background = state ? '#333' : 'linear-gradient(to bottom, #1a1a1a, #0a0a0a)';
+        }
 
         function toggleCams() {
             camsOpen = !camsOpen;
-            const camSys = document.getElementById('camera-system');
-            const stat = document.getElementById('static');
-            
-            if (camsOpen) {
-                camSys.style.display = 'block';
-                stat.style.display = 'block';
-                switchCam(1, 'https://images.unsplash.com/photo-1510070112810-d4e9a46d9e91?auto=format&fit=crop&w=800&q=80');
-            } else {
-                camSys.style.display = 'none';
-                stat.style.display = 'none';
-            }
+            document.getElementById('camera-screen').style.display = camsOpen ? 'block' : 'none';
         }
 
-        function switchCam(id, url) {
-            document.getElementById('cam-info').innerText = "CAM " + id;
-            const img = document.getElementById('cam-view');
-            
-            // Jeśli robot jest na tej kamerze, pokazujemy go (uproszczone)
-            if (id === robotPos) {
-                img.style.filter = "sepia(1) hue-rotate(300deg) brightness(0.5)";
-            } else {
-                img.style.filter = "grayscale(1) brightness(0.3)";
-            }
-            img.src = url;
-        }
-
-        // Ruch robota (AI)
-        setInterval(() => {
-            robotPos = Math.floor(Math.random() * 5) + 1;
-            if (robotPos > 4 && !camsOpen) {
-                gameOver("Złapał Cię!");
-            }
-        }, 10000);
-
-        function gameOver(reason) {
-            document.getElementById('jumpscare').style.display = 'flex';
-            setTimeout(() => location.reload(), 3000);
-        }
-
-        // Śledzenie myszki w biurze
+        // Ruch biura za myszką
         document.addEventListener('mousemove', (e) => {
-            if (!camsOpen) {
-                let move = (e.clientX - window.innerWidth/2) / 20;
-                document.getElementById('office').style.transform = `translateX(${-move}px)`;
-            }
+            const x = (window.innerWidth / 2 - e.clientX) / 10;
+            document.getElementById('office').style.transform = `translateX(${x}px)`;
         });
+
+        // Pętla gry
+        setInterval(updatePower, 1000);
+        setInterval(() => {
+            hour = hour === 12 ? 1 : hour + 1;
+            document.getElementById('time').innerText = hour + " AM";
+            if(hour === 6) alert("6 AM! WYGRAŁEŚ!");
+        }, 60000); // 1 minuta realna = 1 godzina w grze
 
     </script>
 </body>
