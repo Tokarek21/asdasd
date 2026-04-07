@@ -2,179 +2,164 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Craft - Menu</title>
+    <title>AI Five Nights at Freddy's Clone</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
-
-        /* Tło menu - symulacja panoramy */
-        #menu-container {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                        url('https://minecraft.wiki/images/thumb/Panorama_Java_1.20.png/1200px-Panorama_Java_1.20.png');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 20;
+        body { margin: 0; background: #000; color: white; font-family: 'Courier New', monospace; overflow: hidden; user-select: none; }
+        
+        /* BIURO */
+        #office {
+            width: 100vw; height: 100vh;
+            background: #111 url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            display: flex; justify-content: center; align-items: center;
+            position: relative; transition: transform 0.1s;
         }
 
-        /* Logo */
-        .logo {
-            font-size: 80px;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 4px 4px 0px #3f3f3f;
-            margin-bottom: 60px;
-            transform: scaleY(1.2);
-            letter-spacing: 2px;
+        #desk {
+            width: 600px; height: 300px; background: #222;
+            position: absolute; bottom: 0; border-top: 5px solid #333;
         }
 
-        /* Kontener na przyciski */
-        .button-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 400px;
+        /* KAMERY */
+        #monitor-btn {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 400px; height: 40px; background: rgba(255,255,255,0.2);
+            border: 2px solid white; cursor: pointer; z-index: 100; text-align: center; line-height: 40px;
         }
 
-        .row {
-            display: flex;
-            gap: 10px;
+        #camera-system {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 50;
         }
 
-        /* Styl przycisków MC */
-        .mc-btn {
-            background: #666;
-            border: 2px solid #000;
-            border-top-color: #aaa;
-            border-left-color: #aaa;
-            color: #E0E0E0;
-            padding: 10px;
-            text-align: center;
-            font-size: 18px;
-            cursor: pointer;
-            flex: 1;
-            user-select: none;
-            box-shadow: inset -2px -2px 0px #333;
+        #cam-view {
+            width: 100%; height: 100%; object-fit: cover; opacity: 0.6;
         }
 
-        .mc-btn:hover {
-            background: #7ca3ff;
-            border-color: #000;
-            border-top-color: #c6d9ff;
-            border-left-color: #c6d9ff;
-            color: #fff;
+        .cam-map {
+            position: absolute; bottom: 50px; right: 50px; width: 200px; height: 150px;
+            background: rgba(0,0,0,0.8); border: 2px solid white; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 10px;
         }
 
-        .mc-btn:active {
-            border: 2px solid #fff;
-            border-top-color: #000;
-            border-left-color: #000;
+        .cam-btn { background: #444; color: white; border: 1px solid white; cursor: pointer; padding: 5px; font-size: 10px; }
+        .cam-btn:hover { background: #888; }
+
+        /* UI STATYSTYKI */
+        #ui { position: absolute; top: 20px; left: 20px; z-index: 10; font-size: 24px; }
+        #static {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://media.giphy.com/media/oEI9uWUqWMrBK/giphy.gif');
+            opacity: 0.1; pointer-events: none; z-index: 60; display: none;
         }
 
-        canvas { display: block; }
-        #ui-overlay { position: absolute; bottom: 10px; left: 10px; color: white; font-size: 12px; z-index: 5; }
+        /* JUMPSCARE */
+        #jumpscare {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: red; z-index: 1000; justify-content: center; align-items: center;
+        }
     </style>
 </head>
 <body>
 
-    <div id="menu-container">
-        <div class="logo">AICRAFT</div>
-        
-        <div class="button-wrapper">
-            <div class="mc-btn" onclick="startGame()">Singleplayer</div>
-            <div class="mc-btn" style="color: #888; cursor: not-allowed;">Multiplayer</div>
-            <div class="mc-btn" style="color: #888; cursor: not-allowed;">Minecraft Realms</div>
-            
-            <div class="row">
-                <div class="mc-btn">Options...</div>
-                <div class="mc-btn">Quit Game</div>
-            </div>
-        </div>
+    <div id="ui">
+        <div>Power: <span id="power">100</span>%</div>
+        <div id="time">12 AM</div>
     </div>
 
-    <div id="ui-overlay" style="display:none;">AI Craft Alpha 0.0.1 - Poruszaj myszką, by patrzeć</div>
+    <div id="office">
+        <div style="font-size: 100px;">🌑</div> <div id="desk"></div>
+    </div>
 
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://unpkg.com/three@0.150.1/build/three.module.js"
-        }
-      }
-    </script>
+    <div id="monitor-btn" onclick="toggleCams()">MONITOR</div>
 
-    <script type="module">
-        import * as THREE from 'three';
+    <div id="camera-system">
+        <div id="static"></div>
+        <div id="cam-info" style="position:absolute; top:20px; right:20px; font-size:30px;">CAM 1</div>
+        <div class="cam-map">
+            <button class="cam-btn" onclick="switchCam(1, 'https://images.unsplash.com/photo-1510070112810-d4e9a46d9e91?auto=format&fit=crop&w=800&q=80')">CAM 1</button>
+            <button class="cam-btn" onclick="switchCam(2, 'https://images.unsplash.com/photo-1519074063912-92f5727b24bb?auto=format&fit=crop&w=800&q=80')">CAM 2</button>
+            <button class="cam-btn" onclick="switchCam(3, 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80')">CAM 3</button>
+            <button class="cam-btn" onclick="switchCam(4, 'https://images.unsplash.com/photo-1505798577917-a65157d3320a?auto=format&fit=crop&w=800&q=80')">CAM 4</button>
+        </div>
+        <img id="cam-view" src="" alt="View">
+    </div>
 
-        let scene, camera, renderer;
+    <div id="jumpscare">
+        <h1 style="font-size: 100px;">😱 KONIEC GRY</h1>
+    </div>
 
-        function initWorld() {
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87CEEB);
+    <script>
+        let power = 100;
+        let camsOpen = false;
+        let hour = 0;
+        let robotPos = 1; // Robot zaczyna w CAM 1
 
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(8, 6, 12);
-            camera.lookAt(0, 0, 0);
-
-            renderer = new THREE.WebGLRenderer({ antialias: false }); // Pixel-art feel
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
-
-            // Oświetlenie
-            const light = new THREE.DirectionalLight(0xffffff, 1.2);
-            light.position.set(10, 20, 10);
-            scene.add(light);
-            scene.add(new THREE.AmbientLight(0x606060));
-
-            // Generowanie terenu
-            const geometry = new THREE.BoxGeometry(1, 1, 1);
-            const material = new THREE.MeshLambertMaterial({ color: 0x55aa55 });
-
-            for(let x = -8; x < 8; x++) {
-                for(let z = -8; z < 8; z++) {
-                    const h = Math.floor(Math.random() * 2); // Lekkie nierówności
-                    const cube = new THREE.Mesh(geometry, material);
-                    cube.position.set(x, h, z);
-                    
-                    const edges = new THREE.EdgesGeometry(geometry);
-                    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x336633 }));
-                    cube.add(line);
-                    scene.add(cube);
-                }
+        // Mechanika prądu
+        setInterval(() => {
+            if (power > 0) {
+                let usage = camsOpen ? 2 : 1;
+                power -= usage;
+                document.getElementById('power').innerText = power;
+            } else {
+                gameOver("Brak prądu...");
             }
+        }, 3000);
 
-            animate();
-        }
+        // Zegar
+        setInterval(() => {
+            hour++;
+            if (hour > 6) alert("Przetrwałeś!");
+            document.getElementById('time').innerText = hour + " AM";
+        }, 45000);
 
-        function animate() {
-            requestAnimationFrame(animate);
-            // Delikatny obrót kamery dla efektu
-            const time = Date.now() * 0.0005;
-            camera.position.x = Math.sin(time) * 15;
-            camera.position.z = Math.cos(time) * 15;
-            camera.lookAt(0, 0, 0);
+        function toggleCams() {
+            camsOpen = !camsOpen;
+            const camSys = document.getElementById('camera-system');
+            const stat = document.getElementById('static');
             
-            renderer.render(scene, camera);
+            if (camsOpen) {
+                camSys.style.display = 'block';
+                stat.style.display = 'block';
+                switchCam(1, 'https://images.unsplash.com/photo-1510070112810-d4e9a46d9e91?auto=format&fit=crop&w=800&q=80');
+            } else {
+                camSys.style.display = 'none';
+                stat.style.display = 'none';
+            }
         }
 
-        window.startGame = function() {
-            document.getElementById('menu-container').style.display = 'none';
-            document.getElementById('ui-overlay').style.display = 'block';
-            initWorld();
-        };
+        function switchCam(id, url) {
+            document.getElementById('cam-info').innerText = "CAM " + id;
+            const img = document.getElementById('cam-view');
+            
+            // Jeśli robot jest na tej kamerze, pokazujemy go (uproszczone)
+            if (id === robotPos) {
+                img.style.filter = "sepia(1) hue-rotate(300deg) brightness(0.5)";
+            } else {
+                img.style.filter = "grayscale(1) brightness(0.3)";
+            }
+            img.src = url;
+        }
 
-        window.addEventListener('resize', () => {
-            if (renderer) {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
+        // Ruch robota (AI)
+        setInterval(() => {
+            robotPos = Math.floor(Math.random() * 5) + 1;
+            if (robotPos > 4 && !camsOpen) {
+                gameOver("Złapał Cię!");
+            }
+        }, 10000);
+
+        function gameOver(reason) {
+            document.getElementById('jumpscare').style.display = 'flex';
+            setTimeout(() => location.reload(), 3000);
+        }
+
+        // Śledzenie myszki w biurze
+        document.addEventListener('mousemove', (e) => {
+            if (!camsOpen) {
+                let move = (e.clientX - window.innerWidth/2) / 20;
+                document.getElementById('office').style.transform = `translateX(${-move}px)`;
             }
         });
+
     </script>
 </body>
 </html>
