@@ -1,169 +1,567 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Geograficzny</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Quiz o Litwie i Białorusi</title>
 
-<style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+    <style>
 
-body{
-    background:linear-gradient(135deg,#bfb8aa,#d9d3c5);
-    font-family:'Poppins',sans-serif;
-    overflow:hidden;
-}
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
 
-.quiz-container{
-    width:90%;
-    max-width:900px;
-    margin:40px auto;
-    background:#d8d2c6;
-    border:5px solid #efefef;
-    border-radius:30px;
-    padding:50px;
-    box-shadow:0 0 30px rgba(0,0,0,0.25);
-    position:relative;
-    min-height:600px;
-}
+        body{
+            background:linear-gradient(135deg,#bdb6a8,#ddd5c5);
+            font-family:'Poppins',sans-serif;
+            overflow:hidden;
+        }
 
-.title{
-    text-align:center;
-    font-family:'Cinzel',serif;
-    font-size:55px;
-    color:#003d6b;
-    margin-bottom:40px;
-    letter-spacing:2px;
-}
+        /* TŁO */
 
-.question-box{
-    animation:fade 0.6s ease;
-}
+        .background{
+            position:fixed;
+            width:100%;
+            height:100%;
+            z-index:-1;
+            overflow:hidden;
+        }
 
-.question{
-    font-size:32px;
-    font-weight:600;
-    margin-bottom:35px;
-    color:#1c1c1c;
-}
+        .circle{
+            position:absolute;
+            border-radius:50%;
+            background:rgba(255,255,255,0.08);
+            animation:float 12s infinite linear;
+        }
 
-.answers button{
-    width:100%;
-    padding:18px;
-    margin:15px 0;
-    border:none;
-    border-radius:20px;
-    font-size:20px;
-    cursor:pointer;
-    background:#f0b800;
-    color:#111;
-    transition:0.3s;
-    font-weight:600;
-}
+        .circle:nth-child(1){
+            width:220px;
+            height:220px;
+            top:10%;
+            left:10%;
+        }
 
-.answers button:hover{
-    transform:translateY(-3px) scale(1.02);
-    background:#ffd447;
-    box-shadow:0 0 20px rgba(255,215,0,0.5);
-}
+        .circle:nth-child(2){
+            width:320px;
+            height:320px;
+            bottom:-100px;
+            right:5%;
+        }
 
-.correct{
-    background:#49c749 !important;
-    color:white;
-}
+        .circle:nth-child(3){
+            width:160px;
+            height:160px;
+            top:60%;
+            left:50%;
+        }
 
-.wrong{
-    background:#ff5b5b !important;
-    color:white;
-}
+        @keyframes float{
 
-.next-btn{
-    margin-top:30px;
-    padding:15px 40px;
-    border:none;
-    border-radius:20px;
-    background:#003d6b;
-    color:white;
-    font-size:20px;
-    cursor:pointer;
-    display:none;
-    transition:0.3s;
-}
+            0%{
+                transform:translateY(0px) rotate(0deg);
+            }
 
-.next-btn:hover{
-    background:#005799;
-    transform:scale(1.05);
-}
+            50%{
+                transform:translateY(-30px) rotate(180deg);
+            }
 
-.progress{
-    margin-top:20px;
-    font-size:18px;
-    color:#444;
-}
+            100%{
+                transform:translateY(0px) rotate(360deg);
+            }
 
-.result{
-    text-align:center;
-    animation:fade 1s ease;
-}
+        }
 
-.result h2{
-    font-size:55px;
-    color:#003d6b;
-    margin-bottom:20px;
-}
+        /* GŁÓWNE */
 
-.result p{
-    font-size:35px;
-    color:#8b0000;
-}
+        .quiz-container{
 
-.result span{
-    color:#f0b800;
-    font-weight:bold;
-}
+            width:90%;
+            max-width:950px;
 
-.restart{
-    margin-top:35px;
-    padding:18px 45px;
-    border:none;
-    border-radius:20px;
-    background:#f0b800;
-    font-size:22px;
-    cursor:pointer;
-    transition:0.3s;
-}
+            margin:35px auto;
 
-.restart:hover{
-    transform:scale(1.05);
-    background:#ffd447;
-}
+            background:rgba(235,230,220,0.92);
 
-@keyframes fade{
-    from{
-        opacity:0;
-        transform:translateY(20px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
+            backdrop-filter:blur(8px);
 
-</style>
+            border-radius:35px;
+
+            padding:45px;
+
+            box-shadow:0 0 35px rgba(0,0,0,0.25);
+
+            border:4px solid rgba(255,255,255,0.5);
+
+            min-height:650px;
+
+            position:relative;
+        }
+
+        .title{
+
+            text-align:center;
+
+            font-family:'Cinzel',serif;
+
+            font-size:58px;
+
+            color:#003b67;
+
+            margin-bottom:15px;
+
+            letter-spacing:3px;
+        }
+
+        /* AUTORZY */
+
+        .authors{
+
+            text-align:center;
+
+            margin-bottom:30px;
+
+            font-size:20px;
+
+            font-weight:600;
+
+            color:white;
+
+            background:linear-gradient(90deg,#f0b800,#ffe680,#f0b800);
+
+            padding:14px;
+
+            border-radius:20px;
+
+            box-shadow:
+            0 0 10px rgba(255,215,0,0.6),
+            0 0 25px rgba(255,215,0,0.4);
+
+            animation:glow 2s infinite alternate;
+
+            letter-spacing:1px;
+        }
+
+        @keyframes glow{
+
+            from{
+
+                transform:scale(1);
+
+                box-shadow:
+                0 0 10px rgba(255,215,0,0.5),
+                0 0 20px rgba(255,215,0,0.3);
+            }
+
+            to{
+
+                transform:scale(1.03);
+
+                box-shadow:
+                0 0 20px rgba(255,215,0,0.9),
+                0 0 40px rgba(255,215,0,0.6);
+            }
+        }
+
+        /* GÓRA */
+
+        .top-bar{
+
+            display:flex;
+
+            justify-content:space-between;
+
+            align-items:center;
+
+            margin-bottom:35px;
+        }
+
+        .progress-text{
+
+            font-size:20px;
+
+            font-weight:600;
+
+            color:#444;
+        }
+
+        .score-box{
+
+            background:#003b67;
+
+            color:white;
+
+            padding:12px 25px;
+
+            border-radius:20px;
+
+            font-size:22px;
+
+            font-weight:bold;
+
+            box-shadow:0 0 15px rgba(0,0,0,0.2);
+
+            animation:pulse 2s infinite;
+        }
+
+        @keyframes pulse{
+
+            0%{
+                transform:scale(1);
+            }
+
+            50%{
+                transform:scale(1.05);
+            }
+
+            100%{
+                transform:scale(1);
+            }
+        }
+
+        /* PROGRESS */
+
+        .progress-bar{
+
+            width:100%;
+
+            height:14px;
+
+            background:#c9c1b4;
+
+            border-radius:20px;
+
+            overflow:hidden;
+
+            margin-bottom:35px;
+        }
+
+        .progress-fill{
+
+            height:100%;
+
+            width:0%;
+
+            background:linear-gradient(to right,#f0b800,#ffd84d);
+
+            transition:0.5s;
+        }
+
+        /* PYTANIA */
+
+        .question-box{
+            animation:slide 0.6s ease;
+        }
+
+        @keyframes slide{
+
+            from{
+                opacity:0;
+                transform:translateX(80px);
+            }
+
+            to{
+                opacity:1;
+                transform:translateX(0);
+            }
+        }
+
+        .slide-out{
+            animation:slideOut 0.6s forwards;
+        }
+
+        @keyframes slideOut{
+
+            from{
+                opacity:1;
+                transform:translateX(0);
+            }
+
+            to{
+                opacity:0;
+                transform:translateX(-120px);
+            }
+        }
+
+        .question{
+
+            font-size:34px;
+
+            font-weight:700;
+
+            color:#222;
+
+            margin-bottom:40px;
+
+            line-height:1.4;
+        }
+
+        /* ODPOWIEDZI */
+
+        .answers button{
+
+            width:100%;
+
+            padding:20px;
+
+            margin:14px 0;
+
+            border:none;
+
+            border-radius:22px;
+
+            background:#f1b800;
+
+            color:#111;
+
+            font-size:21px;
+
+            font-weight:600;
+
+            cursor:pointer;
+
+            transition:0.3s;
+
+            position:relative;
+
+            overflow:hidden;
+        }
+
+        .answers button:hover{
+
+            transform:translateY(-4px) scale(1.02);
+
+            box-shadow:0 0 20px rgba(255,200,0,0.5);
+
+            background:#ffd84d;
+        }
+
+        .answers button::before{
+
+            content:'';
+
+            position:absolute;
+
+            width:100px;
+
+            height:100%;
+
+            background:rgba(255,255,255,0.3);
+
+            top:0;
+
+            left:-120px;
+
+            transform:skewX(-20deg);
+
+            transition:0.5s;
+        }
+
+        .answers button:hover::before{
+            left:110%;
+        }
+
+        /* POPRAWNE */
+
+        .correct{
+
+            background:#4cc94c !important;
+
+            color:white !important;
+
+            animation:correctAnim 0.5s;
+        }
+
+        @keyframes correctAnim{
+
+            0%{
+                transform:scale(0.8);
+            }
+
+            60%{
+                transform:scale(1.08);
+            }
+
+            100%{
+                transform:scale(1);
+            }
+        }
+
+        /* ZŁE */
+
+        .wrong{
+
+            background:#ff5c5c !important;
+
+            color:white !important;
+
+            animation:shake 0.4s;
+        }
+
+        @keyframes shake{
+
+            0%{transform:translateX(0);}
+            25%{transform:translateX(-8px);}
+            50%{transform:translateX(8px);}
+            75%{transform:translateX(-8px);}
+            100%{transform:translateX(0);}
+        }
+
+        /* WYNIK */
+
+        .result{
+
+            text-align:center;
+
+            animation:fade 1s ease;
+
+            padding-top:70px;
+        }
+
+        @keyframes fade{
+
+            from{
+                opacity:0;
+            }
+
+            to{
+                opacity:1;
+            }
+        }
+
+        .result h2{
+
+            font-size:70px;
+
+            color:#003b67;
+
+            margin-bottom:25px;
+        }
+
+        .result p{
+
+            font-size:35px;
+
+            margin:20px 0;
+        }
+
+        .big-score{
+
+            color:#f0b800;
+
+            font-size:80px;
+
+            font-weight:bold;
+
+            text-shadow:0 0 20px rgba(255,200,0,0.5);
+        }
+
+        /* RESTART */
+
+        .restart{
+
+            margin-top:35px;
+
+            padding:20px 50px;
+
+            border:none;
+
+            border-radius:22px;
+
+            background:#f0b800;
+
+            font-size:24px;
+
+            font-weight:bold;
+
+            cursor:pointer;
+
+            transition:0.3s;
+        }
+
+        .restart:hover{
+
+            transform:scale(1.07);
+
+            background:#ffd84d;
+        }
+
+        /* +1 PUNKT */
+
+        .points-popup{
+
+            position:absolute;
+
+            right:30px;
+
+            top:120px;
+
+            font-size:35px;
+
+            font-weight:bold;
+
+            color:#49c749;
+
+            animation:popup 1s forwards;
+        }
+
+        @keyframes popup{
+
+            0%{
+                opacity:0;
+                transform:translateY(20px);
+            }
+
+            50%{
+                opacity:1;
+            }
+
+            100%{
+                opacity:0;
+                transform:translateY(-40px);
+            }
+        }
+
+    </style>
 </head>
 
 <body>
 
+<div class="background">
+
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+
+</div>
+
 <div class="quiz-container">
 
-    <div class="title">QUIZ GEOGRAFICZNY</div>
+    <div class="title">
+        QUIZ O LITWIE I BIAŁORUSI
+    </div>
+
+    <div class="authors">
+        ✨ Quiz przygotowany przez Wikitorię i Michała ✨
+    </div>
+
+    <div class="top-bar">
+
+        <div class="progress-text" id="progressText"></div>
+
+        <div class="score-box">
+            ⭐ Punkty: <span id="score">0</span>
+        </div>
+
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
 
     <div id="quiz"></div>
 
@@ -171,184 +569,267 @@ body{
 
 <script>
 
-const questions = [
+    const questions = [
 
-{
-    question:"Jak nazywa się unikatowy pas wydm wpisany na listę UNESCO?",
+    {
+    question:"Który obszar Litwy jest wpisany na listę UNESCO i oddziela Zalew od Bałtyku?",
     answers:[
-        {text:"Mierzeja Kurońska", correct:true},
-        {text:"Pojezierze Mazurskie", correct:false},
-        {text:"Puszcza Białowieska", correct:false}
+    {text:"Mierzeja Kurońska",correct:true},
+    {text:"Pojezierze Mazurskie",correct:false},
+    {text:"Puszcza Białowieska",correct:false}
     ]
-},
+    },
 
-{
-    question:"Do jakiego morza Litwa ma dostęp?",
+    {
+    question:"Jakie morze znajduje się przy Litwie?",
     answers:[
-        {text:"Morze Czarne", correct:false},
-        {text:"Morze Bałtyckie", correct:true},
-        {text:"Morze Adriatyckie", correct:false}
+    {text:"Morze Północne",correct:false},
+    {text:"Morze Bałtyckie",correct:true},
+    {text:"Morze Czarne",correct:false}
     ]
-},
+    },
 
-{
-    question:"Najcenniejszym obszarem przyrodniczym Białorusi jest:",
+    {
+    question:"Jakie zwierzę jest symbolem Puszczy Białowieskiej?",
     answers:[
-        {text:"Puszcza Białowieska", correct:true},
-        {text:"Tatry", correct:false},
-        {text:"Beskidy", correct:false}
+    {text:"Wilk",correct:false},
+    {text:"Żubr",correct:true},
+    {text:"Ryś",correct:false}
     ]
-},
+    },
 
-{
-    question:"Stolica Białorusi to:",
+    {
+    question:"Jak nazywa się stolica Białorusi?",
     answers:[
-        {text:"Wilno", correct:false},
-        {text:"Mińsk", correct:true},
-        {text:"Ryga", correct:false}
+    {text:"Wilno",correct:false},
+    {text:"Mińsk",correct:true},
+    {text:"Ryga",correct:false}
     ]
-},
+    },
 
-{
-    question:"Które miasto słynie z jednej z największych starówek w Europie?",
+    {
+    question:"Które miasto słynie z ogromnej zabytkowej starówki?",
     answers:[
-        {text:"Troki", correct:false},
-        {text:"Wilno", correct:true},
-        {text:"Kowno", correct:false}
+    {text:"Troki",correct:false},
+    {text:"Wilno",correct:true},
+    {text:"Grodno",correct:false}
     ]
-},
+    },
 
-{
-    question:"W którym miejscu znajdują się tysiące jezior polodowcowych?",
+    {
+    question:"Jakie krajobrazy dominują na Litwie?",
     answers:[
-        {text:"Pojezierze Litewskie", correct:true},
-        {text:"Mierzeja Wiślana", correct:false},
-        {text:"Sudety", correct:false}
+    {text:"Wysokie góry",correct:false},
+    {text:"Jeziora i niziny",correct:true},
+    {text:"Pustynie",correct:false}
     ]
-}
+    },
 
-];
+    {
+    question:"Które miejsce na Litwie słynie z pięknego zamku?",
+    answers:[
+    {text:"Troki",correct:true},
+    {text:"Mińsk",correct:false},
+    {text:"Kowno",correct:false}
+    ]
+    },
 
-let currentQuestion = 0;
-let score = 0;
+    {
+    question:"Jaka jest główna cecha środowiska Białorusi?",
+    answers:[
+    {text:"Kraj wyspiarski",correct:false},
+    {text:"Głównie niziny i bagna",correct:true},
+    {text:"Wulkany",correct:false}
+    ]
+    }
 
-const quiz = document.getElementById("quiz");
+    ];
 
-function showQuestion(){
+    let currentQuestion = 0;
+    let score = 0;
+
+    const quiz = document.getElementById("quiz");
+
+    function showQuestion(){
 
     let q = questions[currentQuestion];
 
+    document.getElementById("progressText").innerHTML =
+    `Pytanie ${currentQuestion+1} z ${questions.length}`;
+
+    document.getElementById("progressFill").style.width =
+    ((currentQuestion)/questions.length)*100 + "%";
+
     quiz.innerHTML = `
-    
+
     <div class="question-box">
-    
-        <div class="question">
-            ${currentQuestion + 1}. ${q.question}
-        </div>
 
-        <div class="answers">
-            ${q.answers.map(answer => `
-                <button onclick="selectAnswer(this, ${answer.correct})">
-                    ${answer.text}
-                </button>
-            `).join("")}
-        </div>
+    <div class="question">
+    ${q.question}
+    </div>
 
-        <button class="next-btn" onclick="nextQuestion()">
-            Następne →
-        </button>
+    <div class="answers">
 
-        <div class="progress">
-            Pytanie ${currentQuestion + 1} / ${questions.length}
-        </div>
+    ${q.answers.map(answer => `
+
+    <button onclick="selectAnswer(this, ${answer.correct})">
+
+    ${answer.text}
+
+    </button>
+
+    `).join("")}
 
     </div>
-    
-    `;
-}
 
-function selectAnswer(button, correct){
+    </div>
+
+    `;
+
+    }
+
+    function selectAnswer(button, correct){
 
     const buttons = document.querySelectorAll(".answers button");
 
     buttons.forEach(btn => btn.disabled = true);
 
     if(correct){
-        button.classList.add("correct");
-        score++;
+
+    button.classList.add("correct");
+
+    score++;
+
+    document.getElementById("score").innerText = score;
+
+    const popup = document.createElement("div");
+
+    popup.classList.add("points-popup");
+
+    popup.innerText = "+1 ⭐";
+
+    document.querySelector(".quiz-container").appendChild(popup);
+
+    setTimeout(()=>{
+    popup.remove();
+    },1000);
+
     }else{
-        button.classList.add("wrong");
+
+    button.classList.add("wrong");
+
     }
 
-    buttons.forEach(btn => {
+    buttons.forEach(btn=>{
 
-        if(btn.innerText === questions[currentQuestion].answers.find(a => a.correct).text){
-            btn.classList.add("correct");
-        }
+    if(btn.innerText === questions[currentQuestion].answers.find(a=>a.correct).text){
+
+    btn.classList.add("correct");
+
+    }
 
     });
 
-    document.querySelector(".next-btn").style.display = "inline-block";
-}
+    setTimeout(()=>{
 
-function nextQuestion(){
+    document.querySelector(".question-box").classList.add("slide-out");
+
+    },1200);
+
+    setTimeout(()=>{
+
+    nextQuestion();
+
+    },1800);
+
+    }
+
+    function nextQuestion(){
 
     currentQuestion++;
 
     if(currentQuestion < questions.length){
-        showQuestion();
+
+    showQuestion();
+
     }else{
-        showResult();
+
+    showResult();
+
     }
 
-}
+    }
 
-function showResult(){
+    function showResult(){
+
+    document.getElementById("progressFill").style.width = "100%";
 
     let text = "";
 
     if(score === questions.length){
-        text = "🔥 Perfect!";
-    }else if(score >= 4){
-        text = "😎 Bardzo dobrze!";
-    }else if(score >= 2){
-        text = "🙂 Nieźle!";
-    }else{
-        text = "💀 Czas na powtórkę";
+
+    text = "🔥 Mistrz geografii!";
+
+    }
+
+    else if(score >= 6){
+
+    text = "😎 Mega wynik!";
+
+    }
+
+    else if(score >= 4){
+
+    text = "🙂 Jest dobrze!";
+
+    }
+
+    else{
+
+    text = "💀 Chyba ktoś nie uważał...";
     }
 
     quiz.innerHTML = `
-    
+
     <div class="result">
 
-        <h2>KONIEC QUIZU</h2>
+    <h2>KONIEC QUIZU</h2>
 
-        <p>Twój wynik:</p>
+    <p>Twój wynik:</p>
 
-        <p>
-            <span>${score}</span> / ${questions.length}
-        </p>
+    <div class="big-score">
 
-        <br>
-
-        <p>${text}</p>
-
-        <button class="restart" onclick="restartQuiz()">
-            Zagraj ponownie
-        </button>
+    ${score}/${questions.length}
 
     </div>
-    
+
+    <p>${text}</p>
+
+    <button class="restart" onclick="restartQuiz()">
+
+    Zagraj jeszcze raz
+
+    </button>
+
+    </div>
+
     `;
-}
 
-function restartQuiz(){
+    }
+
+    function restartQuiz(){
+
     currentQuestion = 0;
-    score = 0;
-    showQuestion();
-}
 
-showQuestion();
+    score = 0;
+
+    document.getElementById("score").innerText = "0";
+
+    showQuestion();
+
+    }
+
+    showQuestion();
 
 </script>
 
